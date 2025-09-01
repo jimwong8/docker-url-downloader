@@ -1,0 +1,21 @@
+version: "3.9"
+
+services:
+  resolver:
+    image: jimwong8/url-resolver:latest
+    container_name: url-resolver
+    ports:
+      - "8000:8000"
+    shm_size: "1g"   # Playwright 稳定运行必需
+    restart: unless-stopped
+
+  downloader:
+    image: jimwong8/url-downloader:latest
+    container_name: url-downloader
+    environment:
+      url: "https://原始签名链接"
+      dns: "8.8.8.8"
+      resolver_endpoint: "http://resolver:8000/resolve"
+    depends_on:
+      - resolver
+    restart: unless-stopped

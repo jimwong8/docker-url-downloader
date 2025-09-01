@@ -1,0 +1,94 @@
+//@version=6
+strategy("Divergence Trading Strategy v4", overlay=true, max_bars_back=1000, initial_capital=100000, margin_long=1.0, margin_short=1.0)
+
+// === 输入参数 ===
+prd = input.int(5, "枢轴点周期", minval=1, maxval=50)
+source = input.string("Close", "枢轴点源数据", options=["Close", "High/Low"])
+searchdiv = input.string("Regular", "背离类型", options=["Regular", "Hidden", "Regular/Hidden"])
+showlimit = input.int(1, "最小背离数量", minval=1, maxval=11)
+maxpp = input.int(10, "最大检测枢轴点数", minval=1, maxval=20)
+maxbars = input.int(100, "最大检测K线数", minval=30, maxval=200)
+showlabels = input(true, "显示交易信号")
+stoploss = input.float(0.5, "止损百分比", minval=0.1, step=0.1)/100
+
+// === 技术指标计算 ===
+[macd, signal, deltamacd] = ta.macd(close, 12, 26, 9)
+rsi = ta.rsi(close, 14)
+stk = ta.sma(ta.stoch(close, high, low, 14), 3)
+cci = ta.cci(close, 10)
+Obv = ta.obv
+
+// === 枢轴点检测 ===
+var ph_positions = array.new_int(20, 0)
+var pl_positions = array.new_int(20, 0)
+var ph_vals = array.new_float(20, 0.)
+var pl_vals = array.new_float(20, 0.)
+
+float ph = ta.pivothigh(source == "Close" ? close : high, prd, prd)
+float pl = ta.pivotlow(source == "Close" ? close : low, prd, prd)
+
+if ph
+    array.unshift(ph_positions, bar_index)
+    array.unshift(ph_vals, ph)
+    if array.size(ph_positions) > 20
+        array.pop(ph_positions)
+        array.pop(ph_vals)
+
+if pl
+    array.unshift(pl_positions, bar_index)
+    array.unshift(pl_vals, pl)
+    if array.size(pl_positions) > 20
+        array.pop(pl_positions)
+        array.pop(pl_vals)
+
+// === 背离检测核心函数 ===
+positive_divergence(src, type) =>
+    // 正向背离检测逻辑...
+
+negative_divergence(src, type) =>
+    // 负向背离检测逻辑...
+
+// === 交易信号生成 ===
+var bool longSignal = false
+var bool shortSignal = false
+var label buyLabel = na
+var label sellLabel = na
+
+longCondition = // 正向背离条件...
+shortCondition = // 负向背离条件...
+
+if longCondition
+    longSignal := true
+    if showlabels
+        buyLabel := label.new(bar_index, low, "▲", color=color.green, style=label.style_label_up, textcolor=color.black)
+
+if shortCondition
+    shortSignal := true
+    if showlabels
+        sellLabel := label.new(bar_index, high, "▼", color=color.red, style=label.style_label_down, textcolor=color.white)
+
+// === 交易执行 ===
+var float entryPrice = na
+var int entryBar = na
+
+if longSignal and strategy.position_size <= 0
+    strategy.entry("Long", strategy.long)
+    entryPrice := close
+    entryBar := bar_index
+    longSignal := false
+
+if shortSignal and strategy.position_size >= 0
+    strategy.entry("Short", strategy.short)
+    entryPrice := close
+    entryBar := bar_index
+    shortSignal := false
+
+// === 风险管理 ===
+if strategy.position_size > 0
+    strategy.exit("Long Exit", "Long", stop=entryPrice*(1-stoploss))
+
+if strategy.position_size < 0
+    strategy.exit("Short Exit", "Short", stop=entryPrice*(1+stoploss))
+
+// === 可视化 ===
+plot(strategy.position_size != 0 ? entryPrice : na, "入场价", color=color.blue, linewidth=2) 
