@@ -1,0 +1,11 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "Download Cluster Monitoring",
+    "tags": ["download", "cluster", "monitoring"],
+    "timezone": "browser",
+    "panels": [],
+    "schemaVersion": 16,
+    "version": 0
+  }
+}

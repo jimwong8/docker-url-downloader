@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Agent Details</h2>
+<div>
+    <p>Name: {{ agent_name }}</p>
+    <p>Status: {{ agent_info.status }}</p>
+    <p>Last seen: {{ agent_info.last_seen }}</p>
+</div>
+{% endblock %}

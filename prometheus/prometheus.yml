@@ -1,0 +1,11 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'resolver'
+    static_configs:
+      - targets: ['resolver:8000']
+      - targets: ['scraper:8500']
+  - job_name: 'node'
+    static_configs:
+      - targets: ['downloader-agent:80']

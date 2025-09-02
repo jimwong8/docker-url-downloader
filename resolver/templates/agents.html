@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Agents</h2>
+<ul>
+  {% for name, info in agents.items() %}
+    <li>{{ name }} - Last seen: {{ info.last_seen }}</li>
+  {% endfor %}
+</ul>
+{% endblock %}

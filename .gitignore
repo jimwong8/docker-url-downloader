@@ -1,0 +1,45 @@
+# Docker (included in repository for this project)
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+*.py.class
+Python.env
+.python-version
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+logs/
+
+# Database
+*.db
+*.sqlite3
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Download files
+*.mp4
+*.mp3
+*.pdf
+*.zip
+*.rar
+*.tar.gz
+
+# Temporary files
+tmp/
+temp/

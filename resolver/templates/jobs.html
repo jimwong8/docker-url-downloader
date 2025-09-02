@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Jobs</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Agent</th>
+            <th>URL</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for agent, task in tasks.items() %}
+        <tr>
+            <td>{{ agent }}</td>
+            <td>{{ task.url }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
