@@ -1,0 +1,48 @@
+version: '3.9'
+
+services:
+  resolver:
+    image: resolver:optimized
+    container_name: resolver-optimized
+    ports:
+      - "8001:8000"  # 使用不同端口避免冲突
+    volumes:
+      - ./resolver:/app
+    restart: always
+
+  downloader-agent:
+    image: downloader:optimized
+    container_name: downloader-optimized
+    environment:
+      - NAME=agent01-optimized
+      - SERVER=http://resolver-optimized:8000
+    restart: always
+    depends_on:
+      - resolver
+
+  scraper:
+    image: scraper:optimized
+    container_name: scraper-optimized
+    ports:
+      - "8501:8500"  # 使用不同端口避免冲突
+    restart: always
+
+  # 保留监控服务
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus-test
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus/alerts.yml:/etc/prometheus/alerts.yml
+    ports:
+      - "9091:9090"  # 使用不同端口避免冲突
+    restart: always
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana-test
+    ports:
+      - "3001:3000"  # 使用不同端口避免冲突
+    volumes:
+      - ./grafana/dashboards.json:/var/lib/grafana/dashboards/default.json
+    restart: always

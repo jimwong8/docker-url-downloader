@@ -1,0 +1,24 @@
+# 简化优化版本 - 使用最新安全的alpine镜像
+FROM python:3.12-alpine
+
+# 安装系统依赖
+RUN apk add --no-cache \
+    ca-certificates \
+    && rm -rf /var/cache/apk/*
+
+WORKDIR /app
+
+# 复制并安装Python依赖
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# 复制应用代码
+COPY . .
+
+# 暂时使用root用户以避免权限问题
+# RUN adduser -D -s /bin/sh resolver && \
+#     chown -R resolver:resolver /app
+# USER resolver
+
+EXPOSE 8000
+CMD ["python", "app.py"]

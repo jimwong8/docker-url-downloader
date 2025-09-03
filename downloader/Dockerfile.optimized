@@ -1,0 +1,19 @@
+# 优化版本 - 使用最新安全的alpine镜像
+FROM python:3.12-alpine
+
+# 安装必要的系统依赖
+RUN apk add --no-cache \
+    ca-certificates \
+    && rm -rf /var/cache/apk/*
+
+WORKDIR /app
+
+# 复制并安装Python依赖
+COPY agent.py .
+RUN pip install --no-cache-dir requests
+
+# 创建非root用户
+RUN adduser -D -s /bin/sh downloader
+USER downloader
+
+CMD ["python", "agent.py"]
